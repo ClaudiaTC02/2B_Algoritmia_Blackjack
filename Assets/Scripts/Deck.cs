@@ -14,7 +14,6 @@ public class Deck : MonoBehaviour
 
     public int[] values = new int[52];
     int cardIndex = 0;    
-       
     private void Awake()
     {    
         InitCardValues();        
@@ -34,6 +33,18 @@ public class Deck : MonoBehaviour
          * En principio, la posición de cada valor se deberá corresponder con la posición de faces. 
          * Por ejemplo, si en faces[1] hay un 2 de corazones, en values[1] debería haber un 2.
          */
+        int contador = 0;
+        for(int palo = 1; palo <= 4; palo++){
+            for(int carta = 1; carta <=13; carta++){
+                if(carta >= 2 && carta <=10){
+                    values[contador] = carta;
+                } else if(carta > 10){
+                    values[contador] = 10;
+                } /*else if(carta == 1){
+                    values[contador] = carta;
+                }*/
+            }
+        }
     }
 
     private void ShuffleCards()
