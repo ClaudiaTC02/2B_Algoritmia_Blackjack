@@ -75,6 +75,28 @@ public class Deck : MonoBehaviour
             /*TODO:
              * Si alguno de los dos obtiene Blackjack, termina el juego y mostramos mensaje
              */
+            //Si el dealer obtiene blackjack o el jugador obtiene mas de 21 puntos
+            if(dealer.GetComponent<CardHand>().points == 21 || player.GetComponent<CardHand>().points > 21){
+                //dar la vuelta a la carta del dealer
+                dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
+                //mostrar mensaje
+                if(dealer.GetComponent<CardHand>().points == 21){
+                    finalMessage.text = "Blackjack del dealer. Has perdido";
+                } else{
+                    finalMessage.text = "Has perdido";
+                }
+            }
+            //si el player obtiene blackjack o el dealer obtiene mas de 21 puntos
+            else if(player.GetComponent<CardHand>().points == 21 || dealer.GetComponent<CardHand>().points > 21){
+                //dar la vuelta a la carta del dealer
+                dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
+                //mostrar mensaje
+                if(dealer.GetComponent<CardHand>().points == 21){
+                    finalMessage.text = "Blackjack. Has ganado";
+                } else{
+                    finalMessage.text = "Has ganado";
+                }
+            }
         }
     }
 
