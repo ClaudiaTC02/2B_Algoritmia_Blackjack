@@ -13,7 +13,8 @@ public class Deck : MonoBehaviour
     public Text probMessage;
 
     public int[] values = new int[52];
-    int cardIndex = 0;    
+    int cardIndex = 0;
+    private CardHand cardHand;    
     private void Awake()
     {    
         InitCardValues();        
@@ -22,6 +23,7 @@ public class Deck : MonoBehaviour
 
     private void Start()
     {
+        cardHand = GameObject.FindObjectOfType<CardHand>();
         ShuffleCards();
         StartGame();        
     }
@@ -36,13 +38,12 @@ public class Deck : MonoBehaviour
         int contador = 0;
         for(int palo = 1; palo <= 4; palo++){
             for(int carta = 1; carta <=13; carta++){
-                if(carta >= 2 && carta <=10){
+                if(carta <=10){
                     values[contador] = carta;
                 } else if(carta > 10){
                     values[contador] = 10;
-                } /*else if(carta == 1){
-                    values[contador] = carta;
-                }*/
+                }
+                contador++;
             }
         }
     }
