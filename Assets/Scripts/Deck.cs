@@ -11,18 +11,23 @@ public class Deck : MonoBehaviour
     public Button playAgainButton;
     public Text finalMessage;
     public Text probMessage;
+    public Text dineroBanca;
+    public Text dineroApuesta;
+    public int apuesta;
+    public int banca = 1000;
 
     public int[] values = new int[52];
     int cardIndex = 0;   
     private void Awake()
     {    
-        InitCardValues();        
+        InitCardValues();  
     }
 
     private void Start()
     {
         ShuffleCards();
-        StartGame();        
+        StartGame();    
+        dineroBanca.text = banca.ToString();    
     }
 
     private void InitCardValues()
@@ -75,7 +80,6 @@ public class Deck : MonoBehaviour
             /*TODO:
              * Si alguno de los dos obtiene Blackjack, termina el juego y mostramos mensaje
              */
-            Debug.Log(dealer.GetComponent<CardHand>().points);
             //Si el dealer obtiene blackjack
             if(dealer.GetComponent<CardHand>().points == 21){
                 //dar la vuelta a la carta del dealer
@@ -85,6 +89,11 @@ public class Deck : MonoBehaviour
                 //desactivar botones
                 stickButton.interactable = false;
                 hitButton.interactable = false;
+                //banca
+                banca -= apuesta;
+                apuesta = 0;
+                dineroBanca.text = banca.ToString(); 
+                dineroApuesta.text = apuesta.ToString();
             }
             //si el player obtiene blackjack
             else if(player.GetComponent<CardHand>().points == 21){
@@ -95,6 +104,11 @@ public class Deck : MonoBehaviour
                 //desactivar botones
                 stickButton.interactable = false;
                 hitButton.interactable = false;
+                //banca
+                banca += apuesta *2;
+                apuesta = 0;
+                dineroApuesta.text = apuesta.ToString();
+                dineroBanca.text = banca.ToString();
             }
         }
     }
@@ -133,9 +147,6 @@ public class Deck : MonoBehaviour
         /*TODO: 
          * Si estamos en la mano inicial, debemos voltear la primera carta del dealer.
          */
-        if(dealer.GetComponent<CardHand>().cards.Count == 2){
-            dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
-        }
         //Repartimos carta al jugador
         PushPlayer();
 
@@ -155,6 +166,11 @@ public class Deck : MonoBehaviour
             }
             stickButton.interactable = false;
             hitButton.interactable = false;
+            //banca
+            banca -= apuesta;
+            apuesta = 0;
+            dineroBanca.text = banca.ToString(); 
+            dineroApuesta.text = apuesta.ToString();
         }
     }
 
@@ -177,10 +193,29 @@ public class Deck : MonoBehaviour
         if(dealer.GetComponent<CardHand>().points >= 17){
             if(dealer.GetComponent<CardHand>().points > player.GetComponent<CardHand>().points){
                 finalMessage.text = "Has perdido";
+                stickButton.interactable = false;
+                hitButton.interactable = false;
+                //banca
+                banca -= apuesta;
+                apuesta = 0;
+                dineroBanca.text = banca.ToString(); 
+                dineroApuesta.text = apuesta.ToString();
             } else if(player.GetComponent<CardHand>().points > dealer.GetComponent<CardHand>().points){
                 finalMessage.text = "Has ganado";
+                stickButton.interactable = false;
+                hitButton.interactable = false;
+                //banca
+                banca += apuesta *2;
+                apuesta = 0;
+                dineroApuesta.text = apuesta.ToString();
+                dineroBanca.text = banca.ToString();
             } else{
                 finalMessage.text = "Empate";
+                stickButton.interactable = false;
+                hitButton.interactable = false;
+                //banca
+                apuesta = 0;
+                dineroApuesta.text = apuesta.ToString();
             }
         }
     }
@@ -197,4 +232,8 @@ public class Deck : MonoBehaviour
         StartGame();
     }
     
+    public void Apostar(){
+        apuesta += 10;
+        dineroApuesta.text = apuesta.ToString();
+    }
 }
