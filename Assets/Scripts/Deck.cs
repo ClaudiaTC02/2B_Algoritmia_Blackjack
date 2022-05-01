@@ -76,29 +76,23 @@ public class Deck : MonoBehaviour
              * Si alguno de los dos obtiene Blackjack, termina el juego y mostramos mensaje
              */
             Debug.Log(dealer.GetComponent<CardHand>().points);
-            //Si el dealer obtiene blackjack o el jugador obtiene mas de 21 puntos
-            if(dealer.GetComponent<CardHand>().points == 21 || player.GetComponent<CardHand>().points > 21){
+            //Si el dealer obtiene blackjack
+            if(dealer.GetComponent<CardHand>().points == 21){
                 //dar la vuelta a la carta del dealer
                 dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
                 //mostrar mensaje
-                if(dealer.GetComponent<CardHand>().points == 21){
-                    finalMessage.text = "Blackjack del dealer. Has perdido";
-                } else{
-                    finalMessage.text = "Has perdido";
-                }
+                finalMessage.text = "Blackjack del dealer. Has perdido";
+                //desactivar botones
                 stickButton.interactable = false;
                 hitButton.interactable = false;
             }
-            //si el player obtiene blackjack o el dealer obtiene mas de 21 puntos
-            else if(player.GetComponent<CardHand>().points == 21 || dealer.GetComponent<CardHand>().points > 21){
+            //si el player obtiene blackjack
+            else if(player.GetComponent<CardHand>().points == 21){
                 //dar la vuelta a la carta del dealer
                 dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
                 //mostrar mensaje
-                if(dealer.GetComponent<CardHand>().points == 21){
-                    finalMessage.text = "Blackjack. Has ganado";
-                } else{
-                    finalMessage.text = "Has ganado";
-                }
+                finalMessage.text = "Blackjack. Has ganado";
+                //desactivar botones
                 stickButton.interactable = false;
                 hitButton.interactable = false;
             }
@@ -169,13 +163,25 @@ public class Deck : MonoBehaviour
         /*TODO: 
          * Si estamos en la mano inicial, debemos voltear la primera carta del dealer.
          */
-
+        if(dealer.GetComponent<CardHand>().cards.Count == 2){
+            dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true);
+        }
         /*TODO:
          * Repartimos cartas al dealer si tiene 16 puntos o menos
          * El dealer se planta al obtener 17 puntos o más
          * Mostramos el mensaje del que ha ganado
          */                
-         
+        if(dealer.GetComponent<CardHand>().points <= 16){
+            PushDealer();
+        }else if(dealer.GetComponent<CardHand>().points >= 17){
+            if(dealer.GetComponent<CardHand>().points > player.GetComponent<CardHand>().points){
+                finalMessage.text = "Has perdido";
+            } else if(player.GetComponent<CardHand>().points > dealer.GetComponent<CardHand>().points){
+                finalMessage.text = "Has ganado";
+            } else{
+                finalMessage.text = "Empate";
+            }
+        }
     }
 
     public void PlayAgain()
