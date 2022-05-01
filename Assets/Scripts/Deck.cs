@@ -121,6 +121,42 @@ public class Deck : MonoBehaviour
          * - Probabilidad de que el jugador obtenga entre un 17 y un 21 si pide una carta
          * - Probabilidad de que el jugador obtenga más de 21 si pide una carta          
          */
+        float casosTotales = 52- cardIndex;
+        //values[1] es la carta que el dealer tiene tapada
+        float cantidadSuperarDealer = player.GetComponent<CardHand>().points - values[1];
+        float cantidadSuperarJugador = player.GetComponent<CardHand>().points;
+        float casoFavDealer = 0;
+        float casoFavJugador = 0;
+        float casoFavPerder = 0;
+        if (values[1] > cantidadSuperarDealer) {
+            casoFavDealer++;
+        }
+        if (values[1] + cantidadSuperarJugador <= 21 && values[1] + cantidadSuperarJugador >= 17) {
+            casoFavJugador++;
+        }
+        if (values[1] + cantidadSuperarJugador > 21) {
+            casoFavPerder++;
+        }
+        //Calculamos las probabilidades del resto de las cartas.
+        for (int i = player.GetComponent<CardHand>().cards.Count + dealer.GetComponent<CardHand>().cards.Count + 1; i < values.Length; i++)
+        {
+            if (values[i] > cantidadSuperarDealer)
+            {
+                casoFavDealer++;
+            }
+            if (values[i] + cantidadSuperarJugador <= 21 && values[i] + cantidadSuperarJugador >= 17)
+            {
+                casoFavJugador++;
+            }
+            if (values[i] + cantidadSuperarJugador > 21)
+            {
+                casoFavPerder++;
+            }
+        }
+        probMessage.text = "El dealer tenga más puntuación que el jugador: " + (Mathf.Round(100 * (casoFavDealer / casosTotales))).ToString() + "%" +"\r\n" + "\r\n" + 
+        "El jugador obtenga entre un 17 y un 21 si pide una carta: " + (Mathf.Round(100 * (casoFavJugador / casosTotales))).ToString() + "%" +"\r\n" + "\r\n" + 
+        "El jugador obtenga más de 21 si pide una carta: " + (Mathf.Round(100 * (casoFavPerder / casosTotales))).ToString() + "%";
+
     }
 
     void PushDealer()
