@@ -264,12 +264,29 @@ public class Deck : MonoBehaviour
         player.GetComponent<CardHand>().Clear();
         dealer.GetComponent<CardHand>().Clear();          
         cardIndex = 0;
+        apuesta = 0;
         ShuffleCards();
         StartGame();
     }
     
-    public void Apostar(){
-        apuesta += 10;
-        dineroApuesta.text = apuesta.ToString();
+    public void SubirApuesta(){
+        int apuestax = apuesta + 10;
+        if(apuestax > banca){
+            apuesta = banca;
+            dineroApuesta.text = apuesta.ToString();
+        } else{
+            apuesta += 10;
+            dineroApuesta.text = apuesta.ToString();
+        }
+    }
+    public void BajarApuesta(){
+        int apuestax = apuesta - 10;
+        if(apuestax < 0){
+            apuesta = 0;
+            dineroApuesta.text = apuesta.ToString();
+        } else{
+            apuesta -= 10;
+            dineroApuesta.text = apuesta.ToString();
+        }
     }
 }
