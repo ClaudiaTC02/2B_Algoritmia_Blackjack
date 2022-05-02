@@ -11,6 +11,7 @@ public class Deck : MonoBehaviour
     public Button playAgainButton;
     public Text finalMessage;
     public Text probMessage;
+    public Text prob1message;
     public Text dineroBanca;
     public Text dineroApuesta;
     public int apuesta;
@@ -129,17 +130,24 @@ public class Deck : MonoBehaviour
         int valorJugadorTotal = player.GetComponent<CardHand>().points;
 
         //probabilidad 1
-        //carta descubierta, values[1] es la primera carta que se le repartió al dealer
-        int valorDealerSinSecreto = valorDealerTotal - values[1];
-        // numero de cartas de cada palo - puntos jugador - valor de las cartas descubiertas
-        casosFavorables = 13 - valorJugadorTotal + valorDealerSinSecreto;
-        //entonces la probabilidad será los casos favorables/numero de cartas de cada palo
-        probabilities = casosFavorables / 13f;
-        //redondeo de probabilidad
-        if(probabilities > 1){
-            probabilities = 1;
-        } else if(probabilities< 0){
-            probabilities = 0;
+        //inicio de partida
+        if(player.GetComponent<CardHand>().cards.Count == 2){
+            //carta descubierta, values[1] es la primera carta que se le repartió al dealer
+            int valorDealerSinSecreto = valorDealerTotal - values[1];
+            // numero de cartas de cada palo - puntos jugador - valor de las cartas descubiertas
+            casosFavorables = 13 - valorJugadorTotal + valorDealerSinSecreto;
+            //entonces la probabilidad será los casos favorables/numero de cartas de cada palo
+            probabilities = casosFavorables / 13f;
+            //redondeo de probabilidad
+            if(probabilities > 1){
+                probabilities = 1;
+            } else if(probabilities< 0){
+                probabilities = 0;
+            }
+            Debug.Log("entro");
+            prob1message.text = "El dealer tenga más puntuación que el jugador en su carta oculta: " + (Mathf.Round(probabilities * 100)).ToString() + "%"; 
+        } else{
+            prob1message.text = "Ya no tiene carta oculta el dealer"; 
         }
         //probabilidad 2 y 3
         float casosTotales = 49;
@@ -159,8 +167,7 @@ public class Deck : MonoBehaviour
                 casosFavorables3++;
             }
         }
-        probMessage.text = "El dealer tenga más puntuación que el jugador en su carta oculta: " + (Mathf.Round(probabilities * 100)).ToString() + "%" +"\r\n" + "\r\n" + 
-        "El jugador obtenga entre un 17 y un 21 si pide una carta: " + (Mathf.Round((casosFavorables2/casosTotales) * 100)).ToString() + "%" +"\r\n" + "\r\n" + 
+        probMessage.text = "El jugador obtenga entre un 17 y un 21 si pide una carta: " + (Mathf.Round((casosFavorables2/casosTotales) * 100)).ToString() + "%" +"\r\n" + "\r\n" + 
         "El jugador obtenga más de 21 si pide una carta: " + (Mathf.Round((casosFavorables3/casosTotales)*100)).ToString() + "%";
 
     }
@@ -189,6 +196,10 @@ public class Deck : MonoBehaviour
         /*TODO: 
          * Si estamos en la mano inicial, debemos voltear la primera carta del dealer.
          */
+        if (dealer.GetComponent<CardHand>().cards.Count == 2)
+        {
+            dealer.GetComponent<CardHand>().cards[0].GetComponent<CardModel>().ToggleFace(true); 
+        }
         //Repartimos carta al jugador
         PushPlayer();
 
