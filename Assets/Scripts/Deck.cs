@@ -121,41 +121,47 @@ public class Deck : MonoBehaviour
          * - Probabilidad de que el jugador obtenga entre un 17 y un 21 si pide una carta
          * - Probabilidad de que el jugador obtenga más de 21 si pide una carta          
          */
-        float casosTotales = 52- cardIndex;
-        //values[1] es la carta que el dealer tiene tapada
-        float cantidadSuperarDealer = player.GetComponent<CardHand>().points - values[1];
-        float cantidadSuperarJugador = player.GetComponent<CardHand>().points;
-        float casoFavDealer = 0;
-        float casoFavJugador = 0;
-        float casoFavPerder = 0;
-        if (values[1] > cantidadSuperarDealer) {
-            casoFavDealer++;
+                
+        float probabilities;
+        int casosFavorables;
+        
+        int valorDealerTotal = dealer.GetComponent<CardHand>().points;
+        int valorJugadorTotal = player.GetComponent<CardHand>().points;
+
+        //probabilidad 1
+        //carta descubierta, values[1] es la primera carta que se le repartió al dealer
+        int valorDealerSinSecreto = valorDealerTotal - values[1];
+        // numero de cartas de cada palo - puntos jugador - valor de las cartas descubiertas
+        casosFavorables = 13 - valorJugadorTotal + valorDealerSinSecreto;
+        //entonces la probabilidad será los casos favorables/numero de cartas de cada palo
+        probabilities = casosFavorables / 13f;
+        //redondeo de probabilidad
+        if(probabilities > 1){
+            probabilities = 1;
+        } else if(probabilities< 0){
+            probabilities = 0;
         }
-        if (values[1] + cantidadSuperarJugador <= 21 && values[1] + cantidadSuperarJugador >= 17) {
-            casoFavJugador++;
-        }
-        if (values[1] + cantidadSuperarJugador > 21) {
-            casoFavPerder++;
-        }
-        //Calculamos las probabilidades del resto de las cartas.
+        //probabilidad 2 y 3
+        float casosTotales = 49;
+        int casosFavorables2 = 0;
+        int casosFavorables3 = 0;
+        //empezamos la variable en este valor ya que ya conocemos los anteriores sucesos
         for (int i = player.GetComponent<CardHand>().cards.Count + dealer.GetComponent<CardHand>().cards.Count + 1; i < values.Length; i++)
         {
-            if (values[i] > cantidadSuperarDealer)
+            //PARA SABER SI OBTENDRÁ ENTRE UN 17 Y UN 21 SI PIDE UNA CARTA
+            if (values[i] + valorJugadorTotal <= 21 && values[i] + valorJugadorTotal >= 17)
             {
-                casoFavDealer++;
+                casosFavorables2++;
             }
-            if (values[i] + cantidadSuperarJugador <= 21 && values[i] + cantidadSuperarJugador >= 17)
+            //PARA SABER SI SE PASA DE 21
+            if (values[i] + valorJugadorTotal > 21)
             {
-                casoFavJugador++;
-            }
-            if (values[i] + cantidadSuperarJugador > 21)
-            {
-                casoFavPerder++;
+                casosFavorables3++;
             }
         }
-        probMessage.text = "El dealer tenga más puntuación que el jugador: " + (Mathf.Round(100 * (casoFavDealer / casosTotales))).ToString() + "%" +"\r\n" + "\r\n" + 
-        "El jugador obtenga entre un 17 y un 21 si pide una carta: " + (Mathf.Round(100 * (casoFavJugador / casosTotales))).ToString() + "%" +"\r\n" + "\r\n" + 
-        "El jugador obtenga más de 21 si pide una carta: " + (Mathf.Round(100 * (casoFavPerder / casosTotales))).ToString() + "%";
+        probMessage.text = "El dealer tenga más puntuación que el jugador en su carta oculta: " + (Mathf.Round(probabilities * 100)).ToString() + "%" +"\r\n" + "\r\n" + 
+        "El jugador obtenga entre un 17 y un 21 si pide una carta: " + (Mathf.Round((casosFavorables2/casosTotales) * 100)).ToString() + "%" +"\r\n" + "\r\n" + 
+        "El jugador obtenga más de 21 si pide una carta: " + (Mathf.Round((casosFavorables3/casosTotales)*100)).ToString() + "%";
 
     }
 
